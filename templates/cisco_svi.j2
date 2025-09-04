@@ -1,0 +1,22 @@
+{# templates/cisco_svi.j2 #}
+hostname {{ device.name }}
+!
+{% if device.vlans %}
+! VLANs
+{% for v in device.vlans %}
+vlan {{ v }}
+ name VLAN_{{ v }}
+{% endfor %}
+{% endif %}
+!
+! Interfaces with IP
+{% for intf in device.interfaces if intf.ip_addr %}
+interface {{ intf.name }}
+ description Auto-generated
+ ip address {{ intf.ip_addr }} {{ intf.netmask }}
+{% endfor %}
+!
+! Static routes
+{% for r in device.routes %}
+ip route {{ r.dst_network }} {{ r.dst_netmask }} {{ r.gateway }}
+{% endfor %}

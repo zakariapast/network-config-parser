@@ -1,0 +1,22 @@
+devices:
+- name: cisco.txt
+  vendor: cisco
+  mgmt_ip: 192.168.1.1
+  vlans:
+  - 10
+  interfaces:
+  - name: GigabitEthernet0/1
+    ip: 192.168.1.1/24
+    vlan: 10
+  routes:
+  - dst: 0.0.0.0/0
+    gateway: 192.168.1.254
+- name: fortigate.txt
+  vendor: fortigate
+  mgmt_ip: 10.1.1.1
+  vlans: []
+  interfaces:
+  - name: port1
+    ip: 10.1.1.1/24
+    vlan: null
+  routes: []

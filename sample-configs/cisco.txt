@@ -1,0 +1,6 @@
+interface GigabitEthernet0/1
+ ip address 192.168.1.1 255.255.255.0
+ switchport access vlan 10
+!
+ip route 0.0.0.0 0.0.0.0 192.168.1.254
+access-list 101 permit tcp any any eq 443

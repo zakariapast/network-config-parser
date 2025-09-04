@@ -1,0 +1,5 @@
+config system interface
+    edit "port1"
+        set ip 10.1.1.1 255.255.255.0
+    next
+end

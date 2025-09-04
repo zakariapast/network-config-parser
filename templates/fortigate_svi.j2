@@ -1,0 +1,20 @@
+{# templates/fortigate_svi.j2 #}
+config system interface
+{% for intf in device.interfaces if intf.ip_addr %}
+    edit "{{ intf.name }}"
+        set ip {{ intf.ip_addr }} {{ intf.netmask }}
+        set allowaccess ping https ssh
+    next
+{% endfor %}
+end
+
+{% if device.routes %}
+config router static
+{% for r in device.routes %}
+    edit 0
+        set dst {{ r.dst_network }} {{ r.dst_netmask }}
+        set gateway {{ r.gateway }}
+    next
+{% endfor %}
+end
+{% endif %}
