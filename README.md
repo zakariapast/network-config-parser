@@ -1,96 +1,160 @@
-# 🛠️ Network Config Parser & Renderer
+# Network Config Parser & Generator
 
-A **multi-vendor network automation demo** that parses raw device configs (Cisco, FortiGate), exports them into a normalized inventory (`YAML`/`JSON`), and generates golden configs via **Jinja2 templates**.
+This project is a **mini network automation toolkit** that demonstrates how to:
 
-This project shows the full **NetDevOps flow**:
+* Collect (backup) device configurations
+* Parse raw configs into structured inventory (YAML/JSON)
+* Render configs back using Jinja2 templates
+* Support vendor migration (e.g., Cisco → FortiGate)
 
+It’s designed as a **portfolio-ready lab project** showing scripting, parsing, and automation workflows commonly expected in Network Engineer / Network Automation roles.
 
 ---
 
-## ✨ Features
-- 🔍 **Parse** Cisco & FortiGate configs into structured JSON/YAML
-- 📦 **Normalize** into a vendor-neutral `inventory.yaml` (source of truth)
-- 🏗️ **Render** golden configs using Jinja2 templates
-- 🎭 **Multi-vendor support**: Cisco IOS, FortiGate (extensible to Juniper, Arista, etc.)
-- 🔄 **Cross-vendor migration**: take Cisco inventory → render FortiGate configs
+## 🚀 Features
+
+### 🔹 Backup
+
+* `backup_cisco.py`
+
+  * **SSH mode**: Connects to Cisco IOS devices using Netmiko and saves running-config
+  * **Mock mode**: Copies configs from `sample-configs/` (no hardware required)
+
+### 🔹 Parsing
+
+* `parser.py`: Converts raw configs into structured data (YAML/JSON)
+* `bulk_parse.py`: Automatically parses all configs in `backups/` and builds a unified `inventory.yaml`
+* Produces a summary table (device, vendor, interfaces, VLANs, routes)
+
+### 🔹 Rendering
+
+* `render.py`: Uses Jinja2 templates to generate device configs from `inventory.yaml`
+* Example template: `templates/cisco_svi.j2` for Cisco SVIs, VLANs, and routes
 
 ---
 
 ## 📂 Project Structure
+
+```
 network-config-parser/
-├── sample-configs/ # Example raw device configs
-│ ├── cisco.txt
-│ └── fortigate.txt
-├── templates/ # Jinja2 templates
-│ ├── cisco_svi.j2
-│ └── fortigate_svi.j2
-├── parser.py # Parse raw configs → JSON/YAML
-├── render.py # Render inventory.yaml → configs
-├── requirements.txt # Python dependencies
-└── inventory.yaml # Vendor-neutral source of truth
+├── backups/              # Saved device configs (real or mock)
+├── build/                # Generated configs from templates
+├── sample-configs/       # Example configs for mock mode
+├── templates/            # Jinja2 templates (per vendor)
+├── backup_cisco.py       # Cisco backup script (SSH + mock)
+├── bulk_parse.py         # Helper to parse all backups at once
+├── parser.py             # Parse configs → JSON/YAML
+├── render.py             # Render configs from inventory + templates
+├── inventory.yaml        # Auto-generated device inventory
+├── requirements.txt      # Python dependencies
+├── .env.example          # Example credentials file
+└── README.md             # Project documentation
+```
 
 ---
 
-## 🚀 Quick Start
+## ⚡ Quickstart
 
-### 1. Clone the repo
+### 1. Clone repo
+
 ```bash
 git clone https://github.com/zakariapast/network-config-parser.git
 cd network-config-parser
+```
 
-### 2. Set up virtual environment
+### 2. Create virtual environment & install dependencies
+
+```bash
 python -m venv .venv
-.\.venv\Scripts\activate   # (Windows PowerShell)
+.\.venv\Scripts\activate
 pip install -r requirements.txt
+```
 
-### 3. Parse raw configs
-python parser.py sample-configs/cisco.txt sample-configs/fortigate.txt --yaml
-➡️ Outputs parsed_output.json and parsed_output.yaml.
+### 3. Prepare `.env`
 
-### 4. Export to inventory
-python parser.py sample-configs/*.txt --export-inventory inventory.yaml
+Create a local `.env` (never commit real secrets!)
 
-### 5. Render configs
-Cisco:
-python render.py inventory.yaml templates/cisco_svi.j2 build
-FortiGate:
-python render.py inventory.yaml templates/fortigate_svi.j2 build
-➡️ Generated configs will be saved in build/.
+```ini
+PASSWORD=YourPasswordHere
+ENABLE_SECRET=OptionalEnable
+```
 
-🖼️ Example
+### 4. Run mock backup
 
-Cisco Output
+```bash
+python backup_cisco.py --mock-from sample-configs\cisco.txt --out backups
+```
 
-hostname EDGE-ROUTER-1
-!
-vlan 10
- name VLAN_10
-!
-interface GigabitEthernet0/1
- description Auto-generated
- ip address 10.0.10.1 255.255.255.0
-!
-ip route 0.0.0.0 0.0.0.0 192.168.1.254
+### 5. Parse configs
 
+```bash
+python bulk_parse.py
+```
 
-FortiGate Output
+### 6. Render configs
 
-config system interface
-    edit "VLAN10"
-        set ip 10.10.10.254 255.255.255.0
-        set allowaccess ping https ssh
-    next
-end
+```bash
+python render.py inventory.yaml templates\cisco_svi.j2 build
+```
 
-config router static
-    edit 0
-        set dst 0.0.0.0 0.0.0.0
-        set gateway 10.1.1.254
-    next
-end
+---
 
-🙌 Credits
+## ✅ Example Workflow
 
-Built by Zakaria Prassetyo
- as a portfolio project to demonstrate network automation skills (Python, Jinja2, NetDevOps).
+```bash
+# Backup (mock)
+python backup_cisco.py --mock-from sample-configs\cisco.txt --out backups
 
+# Parse all backups → inventory
+python bulk_parse.py
+
+# Render configs from inventory
+python render.py inventory.yaml templates\cisco_svi.j2 build
+```
+
+Output:
+
+* `backups/` → raw configs
+* `inventory.yaml` → structured device model
+* `build/` → generated configs
+
+---
+
+## 🔐 Security Notes
+
+* `.env` is ignored by git (credentials stay local)
+* Use `.env.example` for safe sharing
+* Rotate/change any test credentials before pushing to GitHub
+
+---
+
+## 🎯 Why This Project
+
+This repo demonstrates **scripting + automation thinking**:
+
+* SSH automation with Netmiko
+* Parsing unstructured text into data models
+* Jinja2 templating for repeatable configs
+* Vendor migration workflows (Cisco → FortiGate, etc.)
+* Clean GitOps-style workflow with backups, inventory, and builds
+
+It’s a solid foundation for:
+
+* Interview coding challenges
+* Personal learning labs
+* Extending into CI/CD pipelines
+
+---
+
+## 🛠️ Next Steps
+
+* Add vendor filters (`--vendor cisco|fortigate`) in bulk parser
+* Add validation checks (e.g., duplicate IPs)
+* Add GitHub Actions CI to auto-parse + render on push
+* Extend templates for FortiGate, Arista, etc.
+
+---
+
+## 📜 License
+
+MIT License (see `LICENSE`).
