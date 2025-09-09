@@ -30,30 +30,6 @@
     "vlans": [
       10
     ],
-    "file": "sample-configs\\cisco.txt"
-  },
-  {
-    "vendor": "fortigate",
-    "hostname": null,
-    "interfaces": [
-      {
-        "name": "port1",
-        "ips": [
-          {
-            "ip": "10.1.1.1",
-            "mask": "255.255.255.0",
-            "cidr": "/24"
-          }
-        ],
-        "vlan": null
-      }
-    ],
-    "routes": [],
-    "policies": [],
-    "all_ips": [
-      "10.1.1.1"
-    ],
-    "vlans": [],
-    "file": "sample-configs\\fortigate.txt"
+    "file": "backups\\EDGE-ROUTER-1.txt"
   }
 ]

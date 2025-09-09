@@ -1,0 +1,6 @@
+devices:
+  - name: EDGE-ROUTER-1
+    host: 192.168.10.1
+    username: admin
+    netmiko_type: cisco_ios     # Cisco IOS/IOS-XE
+    show_cmd: show running-config
