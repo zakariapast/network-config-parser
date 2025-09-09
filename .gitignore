@@ -1,22 +1,46 @@
-# Python
+# ------------------------------
+# Python bytecode & caches
+# ------------------------------
 __pycache__/
-*.pyc
+*.py[cod]
+*$py.class
 *.pyo
 *.pyd
 *.egg-info/
 .pytest_cache/
 .mypy_cache/
 .coverage
+*.log
 
+# ------------------------------
 # Virtual environments
+# ------------------------------
 .venv/
-.env/
+venv/
+env/
+ENV/
+.venv*/
+env*/
 
+# ------------------------------
+# Environment variables / secrets
+# ------------------------------
+.env
+.env.*
+!.env.example     # keep a safe example file in repo
+
+# ------------------------------
 # Build artifacts
+# ------------------------------
 build/
 dist/
+*.egg
+.eggs/
 
-# OS/editor junk
+# ------------------------------
+# IDE/editor/system junk
+# ------------------------------
+.vscode/
+.idea/
 .DS_Store
 Thumbs.db
-.vscode/
